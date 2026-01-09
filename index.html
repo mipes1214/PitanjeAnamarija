@@ -1,148 +1,201 @@
 <!DOCTYPE html>
 <html lang="hr">
 <head>
-    <meta charset="UTF-8">
-    <title>Jedno važno pitanje 💌</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(#ffe6f0, #fff);
-            text-align: center;
-            padding: 40px;
-            overflow: hidden;
-        }
-        .box {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            max-width: 600px;
-            margin: auto;
-            box-shadow: 0 0 15px rgba(0,0,0,0.2);
-            position: relative;
-            z-index: 1;
-        }
-        button {
-            padding: 15px 25px;
-            font-size: 18px;
-            margin: 15px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-        }
-        .yes { background-color: #ff5fa2; color: white; }
-        .no { background-color: #ccc; }
-        .hidden { display: none; }
+<meta charset="UTF-8">
+<title>Jedno važno pitanje 💖</title>
 
-        /* Vatromet */
-        #firework {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-        }
-    </style>
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(#ffe6f0, #fff);
+    transition: background 1s;
+}
+
+.dead {
+    background: #444 !important;
+}
+
+.box {
+    position: relative;
+    z-index: 5;
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 600px;
+    margin: 60px auto;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+}
+
+button {
+    padding: 15px 25px;
+    font-size: 18px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+#yesBtn { background:#ff5fa2; color:white; }
+#noBtn  { background:#ccc; position:absolute; }
+
+.hidden { display:none; }
+
+#saved {
+    margin-top: 20px;
+    font-size: 20px;
+    color: #ff5fa2;
+    font-weight: bold;
+}
+
+canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+}
+
+/* SRCI I CVIJEĆE */
+.float {
+    position: fixed;
+    font-size: 26px;
+    animation: floatUp linear infinite;
+    pointer-events: none;
+}
+
+@keyframes floatUp {
+    from { transform: translateY(0); opacity: 1; }
+    to   { transform: translateY(-110vh); opacity: 0; }
+}
+</style>
 </head>
+
 <body>
 
-<canvas id="firework"></canvas>
+<canvas id="canvas"></canvas>
 
 <div class="box">
     <h1>Hej ti 💕</h1>
     <p>
-        Moram ti nešto priznati...<br><br>
-        Na zanimljiv način sam saznao za tebe i od tada mi se stalno motaš po glavi.
-        Djeluješ kao netko koga bih stvarno volio bolje upoznati.
+        Na zanimljiv način sam saznao za tebe  
+        i od tada mi se stalno motaš po glavi.
     </p>
 
     <h2>Bi li izašla sa mnom na dejt? 😊</h2>
 
-    <button class="yes" id="yesBtn">DA</button>
-    <button class="no" onclick="noClick()">NE</button>
+    <button id="yesBtn">DA</button>
+    <button id="noBtn">NE</button>
 
-    <div id="yes" class="hidden">
+    <div id="saved" class="hidden">💌 Odgovor zabilježen</div>
+
+    <div id="yesText" class="hidden">
         <h2>🎆 JUPIII 🎆</h2>
         <p>🌹 Jedva čekam! 🌹</p>
-        <p>
-            📍 Mjesto: <b>Kafić po tvom izboru</b><br>
-            🕒 Vrijeme: <b>Petak u 18:00</b>
-        </p>
-        <p>Vidimo se 😉</p>
     </div>
 
-    <div id="no" class="hidden">
+    <div id="noText" class="hidden">
         <h2>💔</h2>
-        <p>Oprosti na smetnji.<br>Želim ti sve najbolje ❤️</p>
+        <p>Sve je umrlo.</p>
     </div>
 </div>
 
 <script>
-    const yesBtn = document.getElementById("yesBtn");
+/* ---------- NE BJEŽI ---------- */
+const noBtn = document.getElementById("noBtn");
+function moveNo(){
+    noBtn.style.left=Math.random()*(innerWidth-120)+"px";
+    noBtn.style.top =Math.random()*(innerHeight-60)+"px";
+}
+noBtn.addEventListener("mouseenter", moveNo);
+moveNo();
 
-    // Zaštita: treba držati 1 sekundu da se aktivira
-    let pressTimer;
-    yesBtn.addEventListener('mousedown', () => {
-        pressTimer = window.setTimeout(() => {
-            yesClick();
-            startFirework();
-        }, 1000);
+/* ---------- ZVUK ---------- */
+function playSound(f,d){
+    const c=new AudioContext(),o=c.createOscillator();
+    o.type="triangle"; o.frequency.value=f;
+    o.connect(c.destination); o.start();
+    setTimeout(()=>{o.stop();c.close()},d);
+}
+
+/* ---------- SRCI + CVIJEĆE ---------- */
+let floating = true;
+const icons = ["💖","💗","🌸","🌹","🌷"];
+
+function spawnFloat(){
+    if(!floating) return;
+    const el=document.createElement("div");
+    el.className="float";
+    el.textContent=icons[Math.floor(Math.random()*icons.length)];
+    el.style.left=Math.random()*100+"vw";
+    el.style.bottom="-40px";
+    el.style.animationDuration=(6+Math.random()*6)+"s";
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),12000);
+}
+
+const floatInterval = setInterval(spawnFloat,400);
+
+/* ---------- DA / NE ---------- */
+let clicked=false;
+
+yesBtn.onclick=()=>{
+    if(clicked) return;
+    clicked=true;
+
+    yesBtn.remove();
+    noBtn.remove();
+
+    saved.classList.remove("hidden");
+    yesText.classList.remove("hidden");
+
+    playSound(800,300);
+    setTimeout(()=>playSound(400,600),300);
+
+    startFirework();
+};
+
+noBtn.onclick=()=>{
+    clicked=true;
+    yesBtn.remove();
+    noBtn.remove();
+
+    floating=false;
+    document.querySelectorAll(".float").forEach(e=>e.remove());
+    clearInterval(floatInterval);
+
+    document.body.classList.add("dead");
+    noText.classList.remove("hidden");
+};
+
+/* ---------- VATROMET ---------- */
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
+canvas.width=innerWidth; canvas.height=innerHeight;
+
+function startFirework(){
+    let p=[];
+    for(let i=0;i<120;i++)p.push({
+        x:canvas.width/2,y:canvas.height/2,
+        vx:(Math.random()-.5)*10,vy:(Math.random()-.5)*10,
+        life:100,color:`hsl(${Math.random()*360},100%,50%)`
     });
-    yesBtn.addEventListener('mouseup', () => {
-        clearTimeout(pressTimer);
-    });
-    yesBtn.addEventListener('mouseleave', () => {
-        clearTimeout(pressTimer);
-    });
-
-    function yesClick() {
-        document.getElementById("yes").classList.remove("hidden");
-        document.getElementById("no").classList.add("hidden");
-    }
-
-    function noClick() {
-        document.getElementById("no").classList.remove("hidden");
-        document.getElementById("yes").classList.add("hidden");
-    }
-
-    // Jednostavan vatromet
-    const canvas = document.getElementById('firework');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    function startFirework() {
-        const particles = [];
-        for(let i=0; i<100; i++) {
-            particles.push({
-                x: canvas.width/2,
-                y: canvas.height/2,
-                vx: (Math.random()-0.5)*8,
-                vy: (Math.random()-0.5)*8,
-                color: `hsl(${Math.random()*360},100%,50%)`,
-                life: 100
-            });
-        }
-
-        function animate() {
-            ctx.fillStyle = 'rgba(0,0,0,0.1)';
-            ctx.fillRect(0,0,canvas.width,canvas.height);
-            particles.forEach((p, index) => {
-                p.x += p.vx;
-                p.y += p.vy;
-                p.life--;
-                ctx.fillStyle = p.color;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, 3, 0, Math.PI*2);
-                ctx.fill();
-                if(p.life<=0) particles.splice(index,1);
-            });
-            if(particles.length>0) requestAnimationFrame(animate);
-        }
-        animate();
-    }
+    (function anim(){
+        ctx.fillStyle="rgba(0,0,0,.15)";
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        p.forEach((o,i)=>{
+            o.x+=o.vx; o.y+=o.vy; o.life--;
+            ctx.fillStyle=o.color;
+            ctx.beginPath();
+            ctx.arc(o.x,o.y,3,0,Math.PI*2);
+            ctx.fill();
+            if(o.life<=0)p.splice(i,1);
+        });
+        if(p.length) requestAnimationFrame(anim);
+    })();
+}
 </script>
 
 </body>
 </html>
+
