@@ -226,11 +226,9 @@ yesBtn.onclick=()=>{
     saved.classList.remove("hidden");
     yesText.classList.remove("hidden");
 
-    playSound(800,300);
-    setTimeout(()=>playSound(400,600),300);
-
-    startFirework();
-    explodeHearts(yesBtn);
+    function playSound() {
+    const audio = new Audio("Happy.mp3"); // isto ime kao fajl
+    audio.play();
 };
 
 /* NE STALNO KLIŽE */
@@ -291,6 +289,7 @@ function startFirework(){
 
 </body>
 </html>
+
 
 
 
