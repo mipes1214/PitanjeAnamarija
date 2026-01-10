@@ -38,7 +38,7 @@ button {
     cursor: pointer;
 }
 
-/* ---------- DA GUMB SVJETLI ---------- */
+/* DA GUMB SVJETLI */
 #yesBtn {
     background: linear-gradient(45deg, #ff5fa2, #ff94c2);
     color: white;
@@ -67,6 +67,8 @@ button {
 #noBtn {
     background:#ccc;
     position:absolute;
+    pointer-events: auto;
+    z-index: 10;
 }
 
 .hidden { display:none; }
@@ -174,7 +176,7 @@ const floatInterval = setInterval(spawnFloat,400);
 
 /* ---------- ZVUK ---------- */
 function playSound() {
-    const audio = new Audio("sretan.mp3");
+    const audio = new Audio("sretan.mp3"); // stavi svoj fajl ovdje u istom folderu
     audio.play();
 }
 
@@ -185,7 +187,8 @@ const noBtn=document.getElementById("noBtn");
 const saved=document.getElementById("saved");
 const yesText=document.getElementById("yesText");
 const noText=document.getElementById("noText");
-    /* NE GUMB */
+
+/* NE GUMB */
 noBtn.onclick = () => {
     if(clicked) return;
     clicked = true;
@@ -200,6 +203,7 @@ noBtn.onclick = () => {
     document.body.classList.add("dead");
     noText.classList.remove("hidden");
 };
+
 /* Eksplodirajuća srca u DA gumbu */
 function explodeHearts(btn){
     for(let i=0;i<15;i++){
@@ -226,12 +230,11 @@ yesBtn.onclick=()=>{
     saved.classList.remove("hidden");
     yesText.classList.remove("hidden");
 
-     playSound(); 
+    playSound(); 
     setTimeout(()=>playSound(), 300);
 
     startFirework();
     explodeHearts(yesBtn);
-};
 };
 
 /* NE STALNO KLIŽE */
@@ -292,12 +295,3 @@ function startFirework(){
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
