@@ -142,11 +142,11 @@ canvas {
     <button id="yesBtn">DA</button>
     <button id="noBtn">NE</button>
 
-    <div id="saved" class="hidden">Nadam se da ti se svidja</div>
+    <div id="saved" class="hidden">Javi mi se da se dogovorimo</div>
 
     <div id="yesText" class="hidden">
-        <h2>🎆 JUPIII 🎆</h2>
-        <p>🌹Javi mi se 🌹</p>
+        <h2>🎆 vatromet 🎆</h2>
+        <p>🌹btw lijepa si🌹</p>
     </div>
 
     <div id="noText" class="hidden">
@@ -187,7 +187,21 @@ const noBtn=document.getElementById("noBtn");
 const saved=document.getElementById("saved");
 const yesText=document.getElementById("yesText");
 const noText=document.getElementById("noText");
+    / ne fix / 
+noBtn.onclick = () => {
+    if(clicked) return;
+    clicked = true;
 
+    yesBtn.remove();
+    noBtn.remove();
+
+    floating = false;
+    document.querySelectorAll(".float").forEach(e => e.remove());
+    clearInterval(floatInterval);
+
+    document.body.classList.add("dead");
+    noText.classList.remove("hidden");
+};
 /* Eksplodirajuća srca u DA gumbu */
 function explodeHearts(btn){
     for(let i=0;i<15;i++){
@@ -279,5 +293,6 @@ function startFirework(){
 
 </body>
 </html>
+
 
 
