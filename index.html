@@ -109,7 +109,22 @@ function moveNo(){
 }
 noBtn.addEventListener("mouseenter", moveNo);
 moveNo();
+#noBtn  { background:#ccc; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); }
 
+.hidden { display:none; }
+
+#saved {
+    margin-top: 20px;
+    font-size: 20px;
+    color: #ff5fa2;
+    font-weight: bold;
+}
+
+canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+}
 /* ---------- ZVUK ---------- */
 function playSound(f,d){
     const c=new AudioContext(),o=c.createOscillator();
@@ -198,3 +213,4 @@ function startFirework(){
 
 </body>
 </html>
+
