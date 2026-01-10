@@ -173,11 +173,9 @@ function spawnFloat(){
 const floatInterval = setInterval(spawnFloat,400);
 
 /* ---------- ZVUK ---------- */
-function playSound(f,d){
-    const c=new AudioContext(),o=c.createOscillator();
-    o.type="triangle"; o.frequency.value=f;
-    o.connect(c.destination); o.start();
-    setTimeout(()=>{o.stop();c.close()},d);
+function playSound() {
+    const audio = new Audio("Happy.mp3");
+    audio.play();
 }
 
 /* ---------- DA / NE LOGIKA ---------- */
@@ -237,7 +235,7 @@ yesBtn.onclick=()=>{
 
 /* NE STALNO KLIŽE */
 (function(){
-    const speed = 2; // brzina
+    const speed = 2; 
     let x = Math.random()*(window.innerWidth - noBtn.offsetWidth);
     let y = Math.random()*(window.innerHeight - noBtn.offsetHeight);
     let dx = (Math.random() > 0.5 ? 1 : -1) * speed;
@@ -293,6 +291,7 @@ function startFirework(){
 
 </body>
 </html>
+
 
 
 
