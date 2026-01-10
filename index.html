@@ -38,8 +38,30 @@ button {
     cursor: pointer;
 }
 
-#yesBtn { background:#ff5fa2; color:white; }
-#noBtn  { background:#ccc; position:absolute; }
+/* ---- DA GUMB (zanimljiv) ---- */
+#yesBtn {
+    background:#ff5fa2;
+    color:white;
+    animation: pulse 1.5s infinite;
+    transition: transform .2s, box-shadow .2s;
+}
+
+#yesBtn:hover {
+    transform: scale(1.15) rotate(-2deg);
+    box-shadow: 0 0 25px rgba(255,95,162,.8);
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+    100% { transform: scale(1); }
+}
+
+/* ---- NE GUMB ---- */
+#noBtn {
+    background:#ccc;
+    position:absolute;
+}
 
 .hidden { display:none; }
 
@@ -50,13 +72,14 @@ button {
     font-weight: bold;
 }
 
+/* ---- CANVAS ---- */
 canvas {
     position: fixed;
     inset: 0;
     z-index: 1;
 }
 
-/* SRCI I CVIJEĆE */
+/* ---- SRCI I CVIJEĆE ---- */
 .float {
     position: fixed;
     font-size: 26px;
@@ -101,16 +124,14 @@ canvas {
 </div>
 
 <script>
-/* ---------- NE BJEŽI ---------- */
-const noBtn = document.getElementById("noBtn");
-function moveNo(){
-    noBtn.style.left=Math.random()*(innerWidth-40)+"px";
-    noBtn.style.top =Math.random()*(innerHeight-40)+"px";
-}
-noBtn.addEventListener("mouseenter", moveNo);
-moveNo();
+/* ---- ELEMENTI ---- */
+const yesBtn  = document.getElementById("yesBtn");
+const noBtn   = document.getElementById("noBtn");
+const saved   = document.getElementById("saved");
+const yesText = document.getElementById("yesText");
+const noText  = document.getElementById("noText");
 
-/* ---------- ZVUK ---------- */
+/* ---- ZVUK ---- */
 function playSound(f,d){
     const c=new AudioContext(),o=c.createOscillator();
     o.type="triangle"; o.frequency.value=f;
@@ -118,7 +139,17 @@ function playSound(f,d){
     setTimeout(()=>{o.stop();c.close()},d);
 }
 
-/* ---------- SRCI + CVIJEĆE ---------- */
+function playBeep(freq=600, dur=120){
+    const c=new AudioContext();
+    const o=c.createOscillator();
+    o.type="square";
+    o.frequency.value=freq;
+    o.connect(c.destination);
+    o.start();
+    setTimeout(()=>{o.stop();c.close()},dur);
+}
+
+/* ---- SRCI ---- */
 let floating = true;
 const icons = ["💖","💗","🌸","🌹","🌷"];
 
@@ -129,75 +160,9 @@ function spawnFloat(){
     el.textContent=icons[Math.floor(Math.random()*icons.length)];
     el.style.left=Math.random()*100+"vw";
     el.style.bottom="-40px";
-    el.style.animationDuration=(6+Math.random()*6)+"s";
-    document.body.appendChild(el);
-    setTimeout(()=>el.remove(),12000);
-}
+    el.style.animationDurat
 
-const floatInterval = setInterval(spawnFloat,400);
 
-/* ---------- DA / NE ---------- */
-let clicked=false;
-
-yesBtn.onclick=()=>{
-    if(clicked) return;
-    clicked=true;
-
-    yesBtn.remove();
-    noBtn.remove();
-
-    saved.classList.remove("hidden");
-    yesText.classList.remove("hidden");
-
-    playSound(800,300);
-    setTimeout(()=>playSound(400,600),300);
-
-    startFirework();
-};
-
-noBtn.onclick=()=>{
-    clicked=true;
-    yesBtn.remove();
-    noBtn.remove();
-
-    floating=false;
-    document.querySelectorAll(".float").forEach(e=>e.remove());
-    clearInterval(floatInterval);
-
-    document.body.classList.add("dead");
-    noText.classList.remove("hidden");
-};
-
-/* ---------- VATROMET ---------- */
-const canvas=document.getElementById("canvas");
-const ctx=canvas.getContext("2d");
-canvas.width=innerWidth; canvas.height=innerHeight;
-
-function startFirework(){
-    let p=[];
-    for(let i=0;i<120;i++)p.push({
-        x:canvas.width/2,y:canvas.height/2,
-        vx:(Math.random()-.5)*10,vy:(Math.random()-.5)*10,
-        life:100,color:`hsl(${Math.random()*360},100%,50%)`
-    });
-    (function anim(){
-        ctx.fillStyle="rgba(0,0,0,.15)";
-        ctx.fillRect(0,0,canvas.width,canvas.height);
-        p.forEach((o,i)=>{
-            o.x+=o.vx; o.y+=o.vy; o.life--;
-            ctx.fillStyle=o.color;
-            ctx.beginPath();
-            ctx.arc(o.x,o.y,3,0,Math.PI*2);
-            ctx.fill();
-            if(o.life<=0)p.splice(i,1);
-        });
-        if(p.length) requestAnimationFrame(anim);
-    })();
-}
-</script>
-
-</body>
-</html>
 
 
 
