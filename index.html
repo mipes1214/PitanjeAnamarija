@@ -38,8 +38,31 @@ button {
     cursor: pointer;
 }
 
-#yesBtn { background:#ff5fa2; color:white; }
-#noBtn  { background:#ccc; position:absolute; }
+/* ---------- DA GUMB SVJETLI ---------- */
+#yesBtn {
+    background: linear-gradient(45deg, #ff5fa2, #ff94c2);
+    color: white;
+    font-weight: bold;
+    border-radius: 12px;
+    padding: 15px 30px;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(255,95,162,0.6);
+    animation: glow 1.5s ease-in-out infinite alternate;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#yesBtn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 25px rgba(255,95,162,0.9), 0 0 40px rgba(255,148,194,0.7);
+}
+
+@keyframes glow {
+    0% { box-shadow: 0 0 10px rgba(255,95,162,0.5), 0 0 20px rgba(255,148,194,0.3); }
+    100% { box-shadow: 0 0 25px rgba(255,95,162,0.9), 0 0 40px rgba(255,148,194,0.7); }
+}
+
+/* NE GUMB */
+#noBtn  { background:#ccc; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); }
 
 .hidden { display:none; }
 
@@ -103,20 +126,6 @@ canvas {
 <script>
 /* ---------- NE BJEŽI ---------- */
 const noBtn = document.getElementById("noBtn");
-function moveNo(){
-    noBtn.style.left=Math.random()*(innerWidth-120)+"px";
-    noBtn.style.top =Math.random()*(innerHeight-60)+"px";
-}
-noBtn.addEventListener("mouseenter", moveNo);
-moveNo();
-
-/* ---------- ZVUK ---------- */
-function playSound(f,d){
-    const c=new AudioContext(),o=c.createOscillator();
-    o.type="triangle"; o.frequency.value=f;
-    o.connect(c.destination); o.start();
-    setTimeout(()=>{o.stop();c.close()},d);
-}
 
 /* ---------- SRCI + CVIJEĆE ---------- */
 let floating = true;
@@ -136,8 +145,20 @@ function spawnFloat(){
 
 const floatInterval = setInterval(spawnFloat,400);
 
-/* ---------- DA / NE ---------- */
+/* ---------- ZVUK ---------- */
+function playSound(f,d){
+    const c=new AudioContext(),o=c.createOscillator();
+    o.type="triangle"; o.frequency.value=f;
+    o.connect(c.destination); o.start();
+    setTimeout(()=>{o.stop();c.close()},d);
+}
+
+/* ---------- DA / NE LOGIKA ---------- */
 let clicked=false;
+const yesBtn=document.getElementById("yesBtn");
+const saved=document.getElementById("saved");
+const yesText=document.getElementById("yesText");
+const noText=document.getElementById("noText");
 
 yesBtn.onclick=()=>{
     if(clicked) return;
@@ -156,7 +177,9 @@ yesBtn.onclick=()=>{
 };
 
 noBtn.onclick=()=>{
+    if(clicked) return;
     clicked=true;
+
     yesBtn.remove();
     noBtn.remove();
 
@@ -198,7 +221,6 @@ function startFirework(){
 
 </body>
 </html>
-
 
 
 
