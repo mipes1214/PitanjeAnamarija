@@ -38,33 +38,8 @@ button {
     cursor: pointer;
 }
 
-/* ---------- DA GUMB SVJETLI ---------- */
-#yesBtn {
-    background: linear-gradient(45deg, #ff5fa2, #ff94c2);
-    color: white;
-    font-weight: bold;
-    border-radius: 12px;
-    padding: 15px 30px;
-    cursor: pointer;
-    box-shadow: 0 0 15px rgba(255,95,162,0.6);
-    animation: glow 1.5s ease-in-out infinite alternate;
-    transition: transform 0.2s, box-shadow 0.2s;
-    position: relative;
-    overflow: visible;
-}
-
-#yesBtn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 25px rgba(255,95,162,0.9), 0 0 40px rgba(255,148,194,0.7);
-}
-
-@keyframes glow {
-    0% { box-shadow: 0 0 10px rgba(255,95,162,0.5), 0 0 20px rgba(255,148,194,0.3); }
-    100% { box-shadow: 0 0 25px rgba(255,95,162,0.9), 0 0 40px rgba(255,148,194,0.7); }
-}
-
-/* NE GUMB */
-#noBtn  { background:#ccc; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); }
+#yesBtn { background:#ff5fa2; color:white; }
+#noBtn  { background:#ccc; position:absolute; }
 
 .hidden { display:none; }
 
@@ -92,20 +67,6 @@ canvas {
 @keyframes floatUp {
     from { transform: translateY(0); opacity: 1; }
     to   { transform: translateY(-110vh); opacity: 0; }
-}
-
-/* EXPLODIRAJUĆA SRCA UNUTAR DA */
-.heart {
-    position: absolute;
-    font-size: 20px;
-    animation: heartFly 0.8s ease-out forwards;
-    pointer-events: none;
-    z-index: 10;
-}
-
-@keyframes heartFly {
-    0% { transform: translate(0,0) scale(1); opacity:1; }
-    100% { transform: translate(var(--x), var(--y)) scale(0.5); opacity:0; }
 }
 </style>
 </head>
@@ -140,9 +101,27 @@ canvas {
 </div>
 
 <script>
+/* ---------- NE BJEŽI ---------- */
+const noBtn = document.getElementById("noBtn");
+function moveNo(){
+    noBtn.style.left=Math.random()*(innerWidth-120)+"px";
+    noBtn.style.top =Math.random()*(innerHeight-60)+"px";
+}
+noBtn.addEventListener("mouseenter", moveNo);
+moveNo();
+
+/* ---------- ZVUK ---------- */
+function playSound(f,d){
+    const c=new AudioContext(),o=c.createOscillator();
+    o.type="triangle"; o.frequency.value=f;
+    o.connect(c.destination); o.start();
+    setTimeout(()=>{o.stop();c.close()},d);
+}
+
 /* ---------- SRCI + CVIJEĆE ---------- */
 let floating = true;
 const icons = ["💖","💗","🌸","🌹","🌷"];
+
 function spawnFloat(){
     if(!floating) return;
     const el=document.createElement("div");
@@ -154,40 +133,12 @@ function spawnFloat(){
     document.body.appendChild(el);
     setTimeout(()=>el.remove(),12000);
 }
+
 const floatInterval = setInterval(spawnFloat,400);
 
-/* ---------- ZVUK ---------- */
-function playSound(f,d){
-    const c=new AudioContext(),o=c.createOscillator();
-    o.type="triangle"; o.frequency.value=f;
-    o.connect(c.destination); o.start();
-    setTimeout(()=>{o.stop();c.close()},d);
-}
-
-/* ---------- DA / NE LOGIKA ---------- */
+/* ---------- DA / NE ---------- */
 let clicked=false;
-const yesBtn=document.getElementById("yesBtn");
-const noBtn=document.getElementById("noBtn");
-const saved=document.getElementById("saved");
-const yesText=document.getElementById("yesText");
-const noText=document.getElementById("noText");
 
-/* Funkcija za eksplodirajuća srca u DA gumbu */
-function explodeHearts(btn){
-    for(let i=0;i<15;i++){
-        const heart=document.createElement("div");
-        heart.className="heart";
-        heart.textContent="💖";
-        heart.style.left="50%";
-        heart.style.top="50%";
-        heart.style.setProperty('--x', (Math.random()*200-100)+"px");
-        heart.style.setProperty('--y', (Math.random()*-150-50)+"px");
-        btn.appendChild(heart);
-        setTimeout(()=>heart.remove(),800);
-    }
-}
-
-/* DA */
 yesBtn.onclick=()=>{
     if(clicked) return;
     clicked=true;
@@ -202,14 +153,10 @@ yesBtn.onclick=()=>{
     setTimeout(()=>playSound(400,600),300);
 
     startFirework();
-    explodeHearts(yesBtn);
 };
 
-/* NE */
 noBtn.onclick=()=>{
-    if(clicked) return;
     clicked=true;
-
     yesBtn.remove();
     noBtn.remove();
 
